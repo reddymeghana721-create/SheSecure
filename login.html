@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SheSecure – Login</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+  :root {
+    --rose:#f43f7e; --pink:#ec4899; --mauve:#c084fc;
+    --purple:#8b5cf6; --blush:#fdf2f8;
+    --card:rgba(255,255,255,0.82);
+    --shadow:0 20px 60px rgba(196,77,143,0.18);
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'DM Sans',sans-serif;min-height:100vh;background:var(--blush);display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden;position:relative;}
+  body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 50% at 10% 20%,rgba(244,63,126,.18) 0%,transparent 70%),radial-gradient(ellipse 50% 60% at 90% 80%,rgba(139,92,246,.16) 0%,transparent 70%);pointer-events:none;z-index:0;}
+  .shape{position:fixed;border-radius:50%;filter:blur(1px);opacity:.12;pointer-events:none;z-index:0;animation:floatShape 8s ease-in-out infinite;}
+  .shape-1{width:180px;height:180px;background:var(--rose);top:5%;left:-4%;}
+  .shape-2{width:120px;height:120px;background:var(--mauve);top:60%;right:-2%;animation-delay:-3s;}
+  .shape-3{width:80px;height:80px;background:var(--purple);bottom:10%;left:8%;animation-delay:-5s;}
+  @keyframes floatShape{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-20px) rotate(8deg)}}
+  .page{position:relative;z-index:1;width:100%;max-width:440px;padding:20px 16px;}
+  .brand{text-align:center;margin-bottom:28px;animation:fadeDown .6s ease both;}
+  .brand-shield{width:64px;height:64px;background:linear-gradient(135deg,var(--rose),var(--purple));border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 12px;box-shadow:0 8px 24px rgba(244,63,126,.35);animation:popIn .5s cubic-bezier(.34,1.56,.64,1) .2s both;}
+  .brand h1{font-family:'Playfair Display',serif;font-size:2rem;font-weight:800;background:linear-gradient(135deg,var(--rose),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-.02em;}
+  .brand p{font-size:.85rem;color:#9b6fa5;margin-top:4px;}
+  .card{background:var(--card);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:28px;padding:32px 28px;box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.9);border:1px solid rgba(255,255,255,.7);animation:fadeUp .6s ease .15s both;}
+  .card-title{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;color:#2d1458;margin-bottom:22px;text-align:center;}
+  .field{margin-bottom:18px;}
+  .field label{display:block;font-size:.78rem;font-weight:600;color:#7c3aed;text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px;}
+  .input-wrap{position:relative;}
+  .input-wrap .field-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#c084fc;font-size:.9rem;}
+  .field input{width:100%;padding:12px 40px 12px 38px;border:1.5px solid #e9d5ff;border-radius:14px;background:rgba(255,255,255,.8);font-family:'DM Sans',sans-serif;font-size:.92rem;color:#2d1458;outline:none;transition:border-color .2s,box-shadow .2s;}
+  .field input:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(236,72,153,.12);background:#fff;}
+  .field input::placeholder{color:#c4b5d4;}
+  .eye-toggle{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:#c084fc;cursor:pointer;font-size:.9rem;transition:color .2s;}
+  .eye-toggle:hover{color:var(--pink);}
+  .forgot{text-align:right;font-size:.78rem;margin-top:-10px;margin-bottom:18px;}
+  .forgot a{color:var(--purple);text-decoration:none;font-weight:500;}
+  .forgot a:hover{color:var(--rose);}
+  .btn-primary{width:100%;padding:14px;background:linear-gradient(135deg,var(--rose) 0%,var(--purple) 100%);color:white;border:none;border-radius:14px;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;letter-spacing:.02em;transition:transform .2s,box-shadow .2s;box-shadow:0 6px 20px rgba(244,63,126,.35);position:relative;overflow:hidden;}
+  .btn-primary::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.15),transparent);}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(244,63,126,.45);}
+  .divider{display:flex;align-items:center;gap:12px;margin:20px 0;}
+  .divider hr{flex:1;border:none;border-top:1px solid #e9d5ff;}
+  .divider span{font-size:.78rem;color:#b497c8;white-space:nowrap;}
+  #googleLoginButton{display:flex;justify-content:center;margin-bottom:4px;}
+  .auth-footer{text-align:center;margin-top:20px;font-size:.83rem;color:#9b6fa5;}
+  .auth-footer a{color:var(--purple);font-weight:600;text-decoration:none;}
+  .auth-footer a:hover{color:var(--rose);}
+  #loader{position:fixed;inset:0;background:rgba(253,242,248,.75);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:100;display:none;}
+  .loader-ring{width:50px;height:50px;border-radius:50%;border:4px solid #f9d5e8;border-top-color:var(--rose);animation:spin .8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .safety-strip{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:24px;animation:fadeUp .6s ease .4s both;}
+  .safety-strip .pill{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.7);border:1px solid rgba(236,72,153,.15);border-radius:20px;padding:5px 12px;font-size:.72rem;color:#7c3aed;font-weight:500;}
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes popIn{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+
+  /* ── Forgot Password Modal ── */
+  .fp-overlay{position:fixed;inset:0;background:rgba(45,20,88,.5);backdrop-filter:blur(10px);z-index:300;display:none;align-items:center;justify-content:center;padding:20px;}
+  .fp-overlay.open{display:flex;}
+  .fp-card{background:#fff;border-radius:28px;padding:32px 28px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(196,77,143,.28);border:1px solid rgba(255,255,255,.8);animation:popIn .3s cubic-bezier(.34,1.56,.64,1) both;max-height:90vh;overflow-y:auto;}
+  .fp-icon{width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,var(--rose),var(--purple));display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 14px;box-shadow:0 6px 20px rgba(244,63,126,.3);}
+  .fp-title{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:#2d1458;text-align:center;margin-bottom:6px;}
+  .fp-sub{font-size:.78rem;color:#9b6fa5;text-align:center;margin-bottom:20px;line-height:1.5;}
+  .fp-label{display:block;font-size:.72rem;font-weight:700;color:#7c3aed;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+  .fp-input-wrap{position:relative;margin-bottom:4px;}
+  .fp-input-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#c084fc;font-size:.85rem;}
+  .fp-input{width:100%;padding:11px 38px 11px 36px;border:1.5px solid #e9d5ff;border-radius:13px;background:rgba(255,255,255,.85);font-family:'DM Sans',sans-serif;font-size:.9rem;color:#2d1458;outline:none;transition:border-color .2s;}
+  .fp-input:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(236,72,153,.1);}
+  .fp-input::placeholder{color:#c4b5d4;}
+  .fp-err{font-size:.72rem;color:#f43f7e;margin-top:4px;min-height:16px;}
+  .fp-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--rose),var(--purple));color:white;border:none;border-radius:14px;font-family:'DM Sans',sans-serif;font-size:.92rem;font-weight:600;cursor:pointer;box-shadow:0 5px 18px rgba(244,63,126,.3);transition:transform .2s;margin-top:6px;}
+  .fp-btn:hover{transform:translateY(-2px);}
+  .fp-btn-ghost{width:100%;padding:10px;background:none;border:1.5px solid #e9d5ff;border-radius:14px;font-family:'DM Sans',sans-serif;font-size:.85rem;color:#7c3aed;cursor:pointer;margin-top:8px;transition:background .2s;}
+  .fp-btn-ghost:hover{background:#f9f0ff;}
+  .fp-btn-link{width:100%;padding:9px;background:none;border:none;font-family:'DM Sans',sans-serif;font-size:.8rem;color:#7c3aed;cursor:pointer;margin-top:2px;}
+  .fp-divider{height:1px;background:#f0e8ff;margin:14px 0;}
+  /* OTP */
+  .otp-row{display:flex;gap:8px;justify-content:center;margin-bottom:6px;}
+  .otp-box{width:46px;height:54px;text-align:center;font-size:1.4rem;font-weight:700;border:1.5px solid #e9d5ff;border-radius:13px;background:rgba(255,255,255,.9);color:#2d1458;outline:none;font-family:'DM Sans',sans-serif;transition:border-color .2s,box-shadow .2s;}
+  .otp-box:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(244,63,126,.12);}
+  .otp-hint-badge{display:inline-block;padding:6px 16px;background:#f9f0ff;border:1.5px dashed #c084fc;border-radius:12px;font-size:.82rem;color:#7c3aed;font-weight:700;margin-top:6px;}
+  /* strength */
+  .str-bar{display:flex;gap:4px;margin-top:6px;}
+  .str-seg{flex:1;height:3px;border-radius:2px;background:#f0e8ff;transition:background .3s;}
+  /* success */
+  .success-circle{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 16px;box-shadow:0 6px 20px rgba(16,185,129,.35);animation:popIn .4s cubic-bezier(.34,1.56,.64,1) both;}
+  .progress-bar{width:100%;height:4px;background:#f0e8ff;border-radius:2px;overflow:hidden;}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--rose),var(--purple));width:0%;transition:width 2.8s linear;border-radius:2px;}
+</style>
+</head>
+<body>
+
+<div class="shape shape-1"></div>
+<div class="shape shape-2"></div>
+<div class="shape shape-3"></div>
+<div id="loader"><div class="loader-ring"></div></div>
+
+<!-- Main Login -->
+<div class="page">
+  <div class="brand">
+    <div class="brand-shield">🛡️</div>
+    <h1>SheSecure</h1>
+    <p>Your Safety, Always Connected</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Welcome Back 💕</div>
+    <form onsubmit="event.preventDefault(); handleLogin();">
+      <div class="field">
+        <label>Email Address</label>
+        <div class="input-wrap">
+          <i class="fas fa-envelope field-icon"></i>
+          <input type="email" id="email" placeholder="your.email@example.com" required>
+        </div>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <div class="input-wrap">
+          <i class="fas fa-lock field-icon"></i>
+          <input type="password" id="password" placeholder="Enter your password" required>
+          <i class="fas fa-eye eye-toggle" id="eyeIcon" onclick="togglePassword()"></i>
+        </div>
+      </div>
+      <div class="forgot">
+        <a href="#" onclick="openForgotModal(); return false;">Forgot password?</a>
+      </div>
+      <button type="submit" class="btn-primary">
+        <i class="fas fa-shield-alt" style="margin-right:8px"></i>Login Securely
+      </button>
+    </form>
+    <div class="divider"><hr><span>or continue with</span><hr></div>
+    <div id="googleLoginButton"></div>
+    <div class="auth-footer">Don't have an account? <a href="register.html">Create one →</a></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     FORGOT PASSWORD MODAL — 4-step OTP
+═══════════════════════════════════════ -->
+<div class="fp-overlay" id="fpOverlay">
+<div class="fp-card">
+
+  <!-- STEP 1: Enter email -->
+  <div id="fpStep1">
+    <div class="fp-icon">🔑</div>
+    <div class="fp-title">Forgot Password?</div>
+    <div class="fp-sub">Enter your registered email and we'll send you a 6-digit verification code.</div>
+    <label class="fp-label">Registered Email</label>
+    <div class="fp-input-wrap">
+      <i class="fas fa-envelope"></i>
+      <input type="email" id="fpEmail" class="fp-input" placeholder="your.email@example.com">
+    </div>
+    <div class="fp-err" id="fpEmailErr"></div>
+    <button class="fp-btn" onclick="sendOTP()">Send OTP →</button>
+    <button class="fp-btn-ghost" onclick="closeForgotModal()">Cancel</button>
+  </div>
+
+  <!-- STEP 2: Enter OTP -->
+  <div id="fpStep2" style="display:none">
+    <div class="fp-icon">📨</div>
+    <div class="fp-title">Check Your Email</div>
+    <div class="fp-sub" id="fpOTPHint"></div>
+    <div style="text-align:center;margin-bottom:18px">
+      <span class="otp-hint-badge" id="fpDevOTP"></span>
+    </div>
+    <label class="fp-label" style="text-align:center;display:block">Enter 6-digit OTP</label>
+    <div class="otp-row">
+      <input type="text" inputmode="numeric" maxlength="1" class="otp-box" oninput="otpNext(this)" onkeydown="otpBack(event,this)">
+      <input type="text" inputmode="numeric" maxlength="1" class="otp-box" oninput="otpNext(this)" onkeydown="otpBack(event,this)">
+      <input type="text" inputmode="numeric" maxlength="1" class="otp-box" oninput="otpNext(this)" onkeydown="otpBack(event,this)">
+      <input type="text" inputmode="numeric" maxlength="1" class="otp-box" oninput="otpNext(this)" onkeydown="otpBack(event,this)">
+      <input type="text" inputmode="numeric" maxlength="1" class="otp-box" oninput="otpNext(this)" onkeydown="otpBack(event,this)">
+      <input type="text" inputmode="numeric" maxlength="1" class="otp-box" oninput="otpNext(this)" onkeydown="otpBack(event,this)">
+    </div>
+    <div class="fp-err" id="fpOTPErr" style="text-align:center"></div>
+    <button class="fp-btn" onclick="verifyOTP()">Verify OTP ✓</button>
+    <button class="fp-btn-link" id="resendBtn" onclick="resendOTP()">Resend OTP</button>
+    <div class="fp-divider"></div>
+    <button class="fp-btn-ghost" onclick="fpGoTo(1)">← Back</button>
+  </div>
+
+  <!-- STEP 3: New password -->
+  <div id="fpStep3" style="display:none">
+    <div class="fp-icon">🔐</div>
+    <div class="fp-title">Set New Password</div>
+    <div class="fp-sub">Create a strong new password for your SheSecure account.</div>
+
+    <label class="fp-label">New Password</label>
+    <div class="fp-input-wrap">
+      <i class="fas fa-lock"></i>
+      <input type="password" id="fpNewPass" class="fp-input" placeholder="Min. 8 chars, uppercase &amp; number" oninput="fpStrength(this.value)">
+      <i class="fas fa-eye" id="fpEyeNew" onclick="fpToggleEye('fpNewPass','fpEyeNew')" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#c084fc;cursor:pointer;"></i>
+    </div>
+    <div class="str-bar" style="margin-bottom:4px">
+      <div class="str-seg" id="fps1"></div><div class="str-seg" id="fps2"></div>
+      <div class="str-seg" id="fps3"></div><div class="str-seg" id="fps4"></div>
+    </div>
+    <div style="font-size:.7rem;color:#b497c8;margin-bottom:14px" id="fpStrLabel"></div>
+
+    <label class="fp-label">Confirm Password</label>
+    <div class="fp-input-wrap">
+      <i class="fas fa-lock"></i>
+      <input type="password" id="fpConfPass" class="fp-input" placeholder="Re-enter new password">
+      <i class="fas fa-eye" id="fpEyeConf" onclick="fpToggleEye('fpConfPass','fpEyeConf')" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#c084fc;cursor:pointer;"></i>
+    </div>
+    <div class="fp-err" id="fpPassErr"></div>
+
+    <button class="fp-btn" onclick="resetPassword()">Reset Password &amp; Login 🔑</button>
+  </div>
+
+  <!-- STEP 4: Success -->
+  <div id="fpStep4" style="display:none;text-align:center;padding:10px 0">
+    <div class="success-circle">✅</div>
+    <div class="fp-title">Password Reset!</div>
+    <div class="fp-sub">Your password has been updated successfully.<br>Redirecting you to login…</div>
+    <div class="progress-bar" style="margin-top:18px">
+      <div class="progress-fill" id="fpProgress"></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+/* ── Login ── */
+function togglePassword() {
+  const f=document.getElementById('password'), i=document.getElementById('eyeIcon');
+  f.type==='password'?(f.type='text',i.className='fas fa-eye-slash eye-toggle'):(f.type='password',i.className='fas fa-eye eye-toggle');
+}
+
+function handleLogin() {
+  const email=document.getElementById('email').value;
+  const pass=document.getElementById('password').value;
+  const sE=localStorage.getItem('userEmail');
+  const sP=localStorage.getItem('userPassword');
+  document.getElementById('loader').style.display='flex';
+  setTimeout(()=>{
+    if(email===sE && pass===sP){localStorage.setItem('isLoggedIn','true');window.location.href='dashboard.html';}
+    else{document.getElementById('loader').style.display='none';alert('Incorrect email or password.');}
+  },1200);
+}
+
+function handleCredentialResponse(r){
+  const d=JSON.parse(atob(r.credential.split('.')[1]));
+  localStorage.setItem('googleUser',JSON.stringify(d));
+  window.location.href='dashboard.html';
+}
+
+window.onload=()=>{
+  if(typeof google!=='undefined'){
+    google.accounts.id.initialize({client_id:'670327763509-gh5qo0vnabbh9b4riv49ktsn0j629e1t.apps.googleusercontent.com',callback:handleCredentialResponse});
+    google.accounts.id.renderButton(document.getElementById('googleLoginButton'),{theme:'outline',size:'large',width:'360'});
+  }
+};
+
+/* ══════════════════════════════
+   FORGOT PASSWORD — 4-step OTP
+══════════════════════════════ */
+let _otp='', _otpEmail='', _resendTimer=null;
+
+function openForgotModal(){
+  fpGoTo(1);
+  document.getElementById('fpEmailErr').textContent='';
+  document.getElementById('fpEmail').value='';
+  document.getElementById('fpOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('fpEmail').focus(),200);
+}
+function closeForgotModal(){
+  document.getElementById('fpOverlay').classList.remove('open');
+  clearInterval(_resendTimer);
+}
+function fpGoTo(n){
+  [1,2,3,4].forEach(i=>document.getElementById('fpStep'+i).style.display=i===n?'block':'none');
+}
+
+/* STEP 1 — Send OTP */
+function sendOTP(){
+  const email=document.getElementById('fpEmail').value.trim();
+  const err=document.getElementById('fpEmailErr');
+  err.textContent='';
+  const reg=localStorage.getItem('userEmail');
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){err.textContent='⚠ Enter a valid email address.';return;}
+  if(!reg){err.textContent='⚠ No account found. Please register first.';return;}
+  if(email.toLowerCase()!==reg.toLowerCase()){err.textContent='⚠ This email is not registered with SheSecure.';return;}
+  _otpEmail=email;
+  _otp=Math.floor(100000+Math.random()*900000).toString();
+  document.getElementById('fpOTPHint').textContent='A 6-digit OTP has been sent to '+maskEmail(email);
+  /* Dev hint — in production remove this and use a real email service */
+  document.getElementById('fpDevOTP').textContent='🔢 Your OTP: '+_otp;
+  document.querySelectorAll('.otp-box').forEach(b=>b.value='');
+  document.getElementById('fpOTPErr').textContent='';
+  fpGoTo(2);
+  setTimeout(()=>document.querySelectorAll('.otp-box')[0].focus(),150);
+  startResendCountdown();
+}
+
+function maskEmail(e){const[u,d]=e.split('@');return u.slice(0,2)+'****@'+d;}
+
+function startResendCountdown(){
+  const btn=document.getElementById('resendBtn');
+  let s=30; btn.disabled=true; btn.style.opacity='.5'; btn.textContent='Resend OTP ('+s+'s)';
+  clearInterval(_resendTimer);
+  _resendTimer=setInterval(()=>{
+    s--; if(s<=0){clearInterval(_resendTimer);btn.disabled=false;btn.style.opacity='1';btn.textContent='Resend OTP';}
+    else btn.textContent='Resend OTP ('+s+'s)';
+  },1000);
+}
+
+function resendOTP(){
+  _otp=Math.floor(100000+Math.random()*900000).toString();
+  document.getElementById('fpDevOTP').textContent='🔢 New OTP: '+_otp;
+  document.querySelectorAll('.otp-box').forEach(b=>b.value='');
+  document.getElementById('fpOTPErr').textContent='✅ New OTP sent!';
+  setTimeout(()=>{document.getElementById('fpOTPErr').textContent='';},2000);
+  startResendCountdown();
+  document.querySelectorAll('.otp-box')[0].focus();
+}
+
+/* OTP box navigation */
+function otpNext(el){
+  el.value=el.value.replace(/\D/g,'');
+  if(el.value&&el.nextElementSibling?.classList.contains('otp-box')) el.nextElementSibling.focus();
+  const boxes=[...document.querySelectorAll('.otp-box')];
+  if(boxes.every(b=>b.value)) verifyOTP();
+}
+function otpBack(e,el){
+  if(e.key==='Backspace'&&!el.value&&el.previousElementSibling?.classList.contains('otp-box')) el.previousElementSibling.focus();
+}
+
+/* STEP 2 — Verify OTP */
+function verifyOTP(){
+  const entered=[...document.querySelectorAll('.otp-box')].map(b=>b.value).join('');
+  const err=document.getElementById('fpOTPErr');
+  if(entered.length<6){err.textContent='⚠ Please enter all 6 digits.';return;}
+  if(entered!==_otp){
+    err.textContent='⚠ Incorrect OTP. Please try again.';
+    document.querySelectorAll('.otp-box').forEach(b=>{b.style.borderColor='#f43f7e';b.value='';});
+    document.querySelectorAll('.otp-box')[0].focus();
+    return;
+  }
+  err.textContent='';
+  clearInterval(_resendTimer);
+  fpGoTo(3);
+  setTimeout(()=>document.getElementById('fpNewPass').focus(),150);
+}
+
+/* STEP 3 — Password strength + reset */
+function fpStrength(v){
+  const c=['#f43f7e','#f97316','#f59e0b','#10b981'];
+  const l=['Weak','Fair','Good','Strong 💪'];
+  let s=0;
+  if(v.length>=8)s++;if(/[A-Z]/.test(v))s++;if(/[0-9]/.test(v))s++;if(/[^A-Za-z0-9]/.test(v))s++;
+  ['fps1','fps2','fps3','fps4'].forEach((id,i)=>document.getElementById(id).style.background=i<s?c[s-1]:'#f0e8ff');
+  const lbl=document.getElementById('fpStrLabel');
+  lbl.textContent=v.length?(l[s-1]||''):'';
+  lbl.style.color=s>0?c[s-1]:'#b497c8';
+}
+
+function fpToggleEye(fId,iId){
+  const f=document.getElementById(fId),i=document.getElementById(iId);
+  f.type==='password'?(f.type='text',i.className='fas fa-eye-slash',i.style.color='var(--pink)'):(f.type='password',i.className='fas fa-eye',i.style.color='#c084fc');
+}
+
+function resetPassword(){
+  const np=document.getElementById('fpNewPass').value;
+  const cp=document.getElementById('fpConfPass').value;
+  const err=document.getElementById('fpPassErr');
+  err.textContent='';
+  if(!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(np)){err.textContent='⚠ Min. 8 characters with uppercase & number.';return;}
+  if(np!==cp){err.textContent='⚠ Passwords do not match.';return;}
+  localStorage.setItem('userPassword',np);
+  fpGoTo(4);
+  setTimeout(()=>document.getElementById('fpProgress').style.width='100%',100);
+  setTimeout(()=>{
+    closeForgotModal();
+    document.getElementById('email').value=_otpEmail;
+    document.getElementById('password').value='';
+    document.getElementById('password').focus();
+  },3200);
+}
+</script>
+</body>
+</html>
