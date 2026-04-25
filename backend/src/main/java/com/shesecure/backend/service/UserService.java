@@ -19,12 +19,12 @@ public class UserService {
     // LOGIN USER
     public User loginUser(String email, String password) {
 
-        User user = userRepository.findByEmail(email);
+    User user = userRepository.findByEmail(email);
 
-        if (user != null && user.getPassword().equals(password)) {
-            return user;
-        }
-
-        return null;
+    if (user != null && user.getPasswordHash().equals(password)) {
+        return user;
     }
+
+    return null;
+}
 }
