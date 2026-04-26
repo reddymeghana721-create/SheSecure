@@ -14,9 +14,10 @@ public class User {
 
     private String name;
 
-    private String phone;
-
+    @Column(unique = true)
     private String email;
+
+    private String phone;
 
     @Column(name = "password_hash")
     private String passwordHash;
