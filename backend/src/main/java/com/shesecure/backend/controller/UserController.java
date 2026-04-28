@@ -12,8 +12,16 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    // REGISTER
     @PostMapping("/register")
     public User registerUser(@RequestBody User user) {
         return userService.registerUser(user);
+    }
+
+    // LOGIN FOR BROWSER TESTING (NO POSTMAN NEEDED)
+    @PostMapping("/login")
+    public String loginUser(@RequestParam String email,
+                            @RequestParam String password) {
+        return userService.loginUser(email, password);
     }
 }
